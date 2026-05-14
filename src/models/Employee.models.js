@@ -463,7 +463,7 @@ UserSchema.methods.Token = function(){
     return jwt.sign({
       _id:this._id,
       name:this.name,
-      email:this.email
+      email:this.Emails.email
     },
     process.env.JWT_TOKEN ,
     {
@@ -471,4 +471,4 @@ UserSchema.methods.Token = function(){
     }
 )
 }
-export const User = new mongoose.model("User", UserSchema)
+export const User = mongoose.model("User", UserSchema)
