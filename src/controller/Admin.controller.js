@@ -511,34 +511,172 @@ const addemployee = asynchandler(async(req,res)=>{
       to: [email],
       subject: "Your DOX Access is Ready - Complete Onboarding",
      html: `
- <!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8">
-  <title>Dox</title>
-</head>
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+      <title>DOX Access Portal - Onboarding</title>
+    </head>
 
-<body style="margin:0; padding:0; background:#f4f6f9; font-family:Arial, sans-serif;">
+    <body style="margin:0; padding:0; background:#0F0F0F; font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
 
-  <!-- Wrapper -->
-  <table width="100%" cellspacing="0" cellpadding="0" style="padding:40px 0;">
-    <tr>
-      <td align="center">
-
-        <!-- Main Card -->
-        <table width="600" cellpadding="0" cellspacing="0" style="background:#ffffff; border-radius:12px; overflow:hidden; box-shadow:0 10px 30px rgba(0,0,0,0.05);">
-
-          <!-- HEADER -->
-          <tr>
-            <td align="center" style="padding:32px 24px 24px; background: linear-gradient(120deg, #0A0E14 0%, #112B53 52%, #0A0E14 100%);">
-              
-              <img 
-                src="https://dox.nocapcode.cloud/doxlogo.png"
-                width="100"
-                alt="DOX"
-                style="display:block; opacity:0.95; margin-bottom:10px;"
-              />
+    <table width="100%" cellpadding="0" cellspacing="0" style="background:#0F0F0F;">
+      <tr>
+        <td align="center" style="padding:48px 16px;">
           
+          <table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px; background:#000000; border-radius:12px; border:1px solid #333333; box-shadow:0 4px 24px rgba(0,0,0,0.5); overflow:hidden;">
+            
+            <tr>
+              <td style="padding:40px 32px 30px; text-align:center; border-bottom: 1px solid #333333;">
+                <img src="https://dox.nocapcode.cloud/doxlogo.png" alt="NoCapCode" width="120" style="display:block; margin:0 auto 16px;" />
+                <p style="margin:8px 0 0; font-size:13px; color:#A1A1AA; text-transform:uppercase; letter-spacing:1px;">
+                  Access Portal
+                </p>
+              </td>
+            </tr>
+
+            <tr>
+              <td style="padding:40px 36px; color:#E5E7EB;">
+                
+                <p style="margin:0 0 20px; font-size:15px; color:#FFFFFF;">
+                  Dear <strong>${name.split(" ")[0]}</strong>,
+                </p>
+
+                <p style="margin:0 0 24px; font-size:15px; line-height:1.6; color:#D4D4D8;">
+                  Your onboarding access has been provisioned on DOX. Please complete your onboarding to activate your access across our internal systems.
+                </p>
+
+                <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:30px;">
+                  <tr>
+                    <td style="background:#111111; padding:12px 16px; border-radius:6px; border:1px dashed #333333; text-align:center;">
+                      <p style="margin:0; font-size:12.5px; color:#A1A1AA;">
+                        <em><strong>Note:</strong> The DOX Access Portal is exclusively restricted for use by onboarding employees.</em>
+                      </p>
+                    </td>
+                  </tr>
+                </table>
+
+                <table width="100%" cellpadding="18" cellspacing="0" style="background:#111111; border-radius:8px; border:1px solid #333333; margin-bottom:30px;">
+                  <tr>
+                    <td colspan="2" style="padding-bottom:0;">
+                      <p style="margin:0; font-size:12px; color:#A1A1AA; text-transform:uppercase; letter-spacing:1px; font-weight:600;">
+                        Access Details
+                      </p>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="width:50%; border-right:1px solid #333333;">
+                      <span style="font-size:11px; color:#777777; text-transform:uppercase; letter-spacing:0.5px;">Employee ID</span><br>
+                      <strong style="font-size:15px; color:#FFFFFF; display:inline-block; margin-top:4px;">${empid}</strong>
+                    </td>
+                    <td style="width:50%; padding-left:18px;">
+                      <span style="font-size:11px; color:#777777; text-transform:uppercase; letter-spacing:0.5px;">Temp Credential</span><br>
+                      <strong style="font-size:16px; color:#FFFFFF; display:inline-block; margin-top:4px; font-family:'Courier New', Courier, monospace; letter-spacing:1px;">${password}</strong>
+                    </td>
+                  </tr>
+                </table>
+
+                <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:32px;">
+                  <tr>
+                    <td align="center">
+                      <a href="https://dox.nocapcode.cloud" style="display:inline-block; padding:14px 32px; background:#FFFFFF; color:#000000; font-weight:600; text-decoration:none; border-radius:6px; font-size:15px; transition: background 0.2s;">
+                        Start Onboarding
+                      </a>
+                    </td>
+                  </tr>
+                </table>
+
+                <p style="margin:0 0 20px; font-size:14px; line-height:1.6; color:#D4D4D8;">
+                  Please complete your onboarding by submitting profile details, required documents, and mandatory declarations.
+                </p>
+
+                <table width="100%" cellpadding="0" cellspacing="0" style="background:#111111; border-left: 3px solid #FFFFFF; border-radius:4px; padding:16px; margin-bottom:24px;">
+                  <tr>
+                    <td>
+                      <p style="margin:0; font-size:13.5px; line-height:1.6; color:#D4D4D8;">
+                        <strong style="color:#FFFFFF;">Important Note:</strong> Please complete your onboarding within <strong>24 hours</strong> to avoid restricted access.
+                      </p>
+                    </td>
+                  </tr>
+                </table>
+
+                <hr style="border:none; border-top:1px solid #222222; margin: 32px 0;">
+
+                <p style="margin:0 0 16px; font-size:12.5px; line-height:1.6; color:#A1A1AA;">
+                  <strong>Security Notice:</strong> This email contains system-generated temporary access credentials. Do not share your credentials, and update your password immediately. NoCapCode™ will never request your password via email or phone. If you did not expect this email, please ignore it or report it to IT.
+                </p>
+
+                <p style="margin:0 0 24px; font-size:12.5px; line-height:1.6; color:#777777;">
+                  <em>For the best experience, use an updated browser (Chrome, Edge, or Safari), ensure a stable internet connection, and access via a desktop or laptop.</em>
+                </p>
+
+                <p style="margin:0; font-size:15px; color:#E5E7EB;">
+                  We look forward to having you onboard.
+                </p>
+
+              </td>
+            </tr>
+          </table>
+
+              <table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px; margin-top:20px; text-align:center; color:#777777; font-size:12px; line-height: 1.6;">
+                <tr>
+                      <td style="padding:20px 20px 10px 20px;">
+                        If you have any questions, contact us at
+                        <a href="mailto:hr@nocapcode.cloud" style="color:#A1A1AA; text-decoration:underline;">
+                          hr@nocapcode.cloud
+                        </a>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="padding-bottom:12px;">
+                        <a href="https://www.linkedin.com/company/nocapcode" target="_blank" style="text-decoration:none;">
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="#777777">
+                            <path d="M20.447 20.452H16.893V14.847C16.893 13.522 16.868 11.813 15.049 11.813C13.205 11.813 12.923 13.248 12.923 14.754V20.452H9.368V9H12.782V10.561H12.829C13.306 9.659 14.468 8.707 16.221 8.707C19.897 8.707 20.447 11.07 20.447 14.138V20.452ZM5.337 7.433C4.196 7.433 3.27 6.507 3.27 5.367C3.27 4.227 4.196 3.301 5.337 3.301C6.477 3.301 7.403 4.227 7.403 5.367C7.403 6.507 6.477 7.433 5.337 7.433ZM7.119 20.452H3.555V9H7.119V20.452Z" />
+                          </svg>
+                        </a>
+                      </td>
+                    </tr>
+                    
+                        <tr>
+                          <td style="padding-bottom:12px;">
+                            <a
+                              href="https://nocapcode.cloud/privacy"
+                              target="_blank"
+                              style="color:#777777; text-decoration:none; margin:0 6px;"
+                              >Privacy</a
+                            >
+                            |
+                            <a
+                              href="https://nocapcode.cloud/terms"
+                              target="_blank"
+                              style="color:#777777; text-decoration:none; margin:0 6px;"
+                              >Terms</a
+                            >
+                            |
+                            <a
+                              href="https://nocapcode.cloud/security"
+                              target="_blank"
+                              style="color:#777777; text-decoration:none; margin:0 6px;"
+                              >Security</a
+                            >
+                          </td>
+                        </tr>
+
+                    <tr>
+                      <td style="padding-top:10px; border-top: 1px solid #222222; color:#555555;">
+                        &copy; 2024-26 NoCapCode, Inc. All rights reserved.<br>
+                        Santa Fe ・ New Mexico 87501, USA
+                      </td>
+                    </tr>
+                  </table>
+
+                </td>
+              </tr>
+            </table>
+
+      </body>
+    </html>
               <!-- SUBTEXT UNDER LOGO -->
               <div style="color: rgba(255,255,255,0.65); font-size:12px; letter-spacing:0.5px;">
                 Access Portal
