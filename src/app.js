@@ -9,6 +9,9 @@ const allowedOrigins = [
   "https://atlas.nocapcode.cloud",
 ];
 
+
+
+
 app.use(
   cors({
     origin: function (origin, callback) {
