@@ -5,8 +5,6 @@ import cookieParser from "cookie-parser"
 const app = express()
 
 const allowedOrigins = [
-  "http://localhost:3000",
-  "http://localhost:3001",
   "https://nocapcode.cloud",
   "https://atlas.nocapcode.cloud",
 ];
