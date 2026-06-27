@@ -20,10 +20,10 @@ connectdb()
 })
 
 import "./cron/Metrics.cron.js";   // <--- Load cron
-// import "./cron/inactiveUserCron.js"
-// import "./cron/slaCron.js"
-// import "./cron/performanceScoreCron.js"
-// import "./cron/missedReportCron.js"
-// import "./cron/ActivityremoveCron.js"
+import "./cron/inactiveUserCron.js"
+import "./cron/slaCron.js"
+import "./cron/performanceScoreCron.js"
+import "./cron/missedReportCron.js"
+import "./cron/ActivityremoveCron.js"
 import { connectdb } from "./database/dbconnect.js"
 

@@ -6,7 +6,7 @@ import { Attendance } from "../models/Attendance.models.js";
 
 const getISTDayRangeUTC = (date) => {
   const startIST = new Date(date);
-  startIST.setHours(4, 0, 0, 0);
+  startIST.setHours(0, 0, 0, 0);
 
   const endIST = new Date(date);
   endIST.setHours(23, 59, 59, 999);
