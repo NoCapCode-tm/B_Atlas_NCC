@@ -19,7 +19,7 @@ connectdb()
     console.log("Something Went Wrong",error.message)
 })
 
-// import "./cron/Metrics.cron.js";   // <--- Load cron
+import "./cron/Metrics.cron.js";   // <--- Load cron
 // import "./cron/inactiveUserCron.js"
 // import "./cron/slaCron.js"
 // import "./cron/performanceScoreCron.js"
