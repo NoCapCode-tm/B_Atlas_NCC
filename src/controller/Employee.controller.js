@@ -79,9 +79,9 @@ const taskcompleted = asynchandler(async(req,res)=>{
   }
 
   const task = await Task.findById(taskid)
-  if(project){
+  // if(project){
     
-  }
+  // }
   if(task.projectId){
      const project = await Project.findById(task.projectId)
     if(!project){

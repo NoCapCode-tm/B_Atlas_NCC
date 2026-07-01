@@ -265,10 +265,10 @@ const announcementMailTemplate = ({ name, title, message, type }) => {
 
 const addemployee = asynchandler(async(req,res)=>{
     try {
-        const {email,name,password} = req.body
+        const {email,name,password ,dob,gender,role} = req.body
         
         
-        if(!email || !name || !password){
+        if(!email || !name || !password ||!dob ||!gender){
             throw new Apierror(400,"Please Enter all the Requires Fields")
         }
 
@@ -291,6 +291,9 @@ const addemployee = asynchandler(async(req,res)=>{
             email:email
           },
           password,
+          role,
+          dob,
+          gender,
           status:"Onboarding",
         })
 
@@ -679,6 +682,7 @@ const addemployee = asynchandler(async(req,res)=>{
     </html>
   `
     });
+    console.log(user)
 
     res
       .status(201)
@@ -801,7 +805,7 @@ const assigntask = asynchandler(async (req, res) => {
     throw new Apierror(404, "Employee not found");
   }
 
-  // 🔑 IMPORTANT: make linkedproject optional safely
+  
   if (!linkedproject || linkedproject === "") {
     linkedproject = null;
   }
@@ -821,9 +825,8 @@ const assigntask = asynchandler(async (req, res) => {
     }]
   });
 
-  // ✅ Add task to employee
-  employee.Tasks.push(task._id);
-  await employee.save();
+  // employee.Tasks.push(task._id);
+  // await employee.save();
 
   // ✅ ONLY run project logic if project exists
   if (linkedproject) {
@@ -1042,11 +1045,11 @@ const addproject = asynchandler(async (req, res) => {
     await project.save({validateBeforeSave:false})
 
   
-  for (const member of team) {
-    await User.findByIdAndUpdate(member.userId, {
-      $push: { Projects: project._id }
-    });
-  }
+  // for (const member of team) {
+  //   await User.findByIdAndUpdate(member.userId, {
+  //     $push: { Projects: project._id }
+  //   });
+  // }
 
 
   res.status(201).json(

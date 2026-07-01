@@ -6,9 +6,7 @@ import { Attendance } from "../models/Attendance.models.js";
 import { PerformanceScore } from "../models/PerformanceScore.models.js";
 import { addOrUpdateRedFlag } from "./addRedFlags.js";
 
-/* =========================
-   IST DATE HELPERS
-========================= */
+
 const getYesterdayISTRange = () => {
   const nowIST = new Date(
     new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
@@ -25,9 +23,7 @@ const getYesterdayISTRange = () => {
   return { yesterday, dayStart, dayEnd };
 };
 
-/* =========================
-   CRON
-========================= */
+
 cron.schedule(
   "10 00 * * *",
   async () => {
@@ -45,9 +41,7 @@ cron.schedule(
       );
 
       for (const user of users) {
-        /* =========================
-           TASK SCORE
-        ========================= */
+        
         const tasks = await Task.find({
           assignedto: user._id,
           dueAt: { $gte: dayStart, $lte: dayEnd }
@@ -72,9 +66,7 @@ cron.schedule(
               : 0;
         }
 
-        /* =========================
-           REPORT SCORE
-        ========================= */
+        
         const reportScore = (await Report.exists({
           user: user._id,
           date: { $gte: dayStart, $lte: dayEnd }

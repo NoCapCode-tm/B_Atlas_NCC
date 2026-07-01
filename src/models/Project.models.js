@@ -42,10 +42,10 @@ const ProjectSchema = new mongoose.Schema({
           ref: "User",
           required: true
         },
-        role: {
-          type: String,
-          required: true
-        },
+        // role: {
+        //   type: String,
+        //   required: true
+        // },
         assignedAt: {
           type: Date,
           default: Date.now
