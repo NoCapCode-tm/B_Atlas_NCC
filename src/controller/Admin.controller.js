@@ -268,7 +268,7 @@ const addemployee = asynchandler(async(req,res)=>{
         const {email,name,password ,dob,gender,role} = req.body
         
         
-        if(!email || !name || !password ||!dob ||!gender){
+        if(!email || !name || !password){
             throw new Apierror(400,"Please Enter all the Requires Fields")
         }
 
