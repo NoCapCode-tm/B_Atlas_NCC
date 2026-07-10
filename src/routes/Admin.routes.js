@@ -1,5 +1,5 @@
 import {Router} from "express"
-import { addcomment, addemployee, addproject, adminlogin, allemployees, allprojects, alltasks, alltickets, assignbulkrole, assigntask, assignticket, attendance, createAnnouncement, createissue, createrole, createticket, deleterole, deleteTask, generateReport, getannouncements, getmetricsdata, getReportExports, getroles, getuser, logout, projectdetails, redflags, reports, scores, sla, ticketdetail, updateemployee, updateProject, updaterole, updatestatus, updatetask, userdetails } from "../controller/Admin.controller.js"
+import { addcomment, addemployee, addproject, adminlogin, allemployees, allprojects, alltasks, alltickets, assignbulkrole, assigntask, assignticket, attendance, createAnnouncement, createissue, createrole, createticket, deleteemp, deleterole, deleteTask, generateReport, getannouncements, getmetricsdata, getReportExports, getroles, getuser, logout, projectdetails, redflags, reports, scores, sla, ticketdetail, updateemployee, updateProject, updaterole, updatestatus, updatetask, userdetails } from "../controller/Admin.controller.js"
 import { verifyjwt } from "../middleware/auth.middleware.js"
 
 const adminrouter = Router()
@@ -53,6 +53,7 @@ adminrouter.route("/exports").get(
 //delete apis
 adminrouter.route("/deletetask/:id").delete(deleteTask)
 adminrouter.route("/deleterole/:id").delete(deleterole)
+adminrouter.route("/deleteemp/:id").delete(deleteemp)
 
 
 export {adminrouter}

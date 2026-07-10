@@ -694,6 +694,26 @@ const addemployee = asynchandler(async(req,res)=>{
 
 })
 
+export const deleteemp = asynchandler(async(req,res)=>{
+  const {id} = req.params
+  console.log(id)
+
+  if(!id){
+    throw new Apierror(400,"Please fill all the required fields")
+  }
+
+  const user = await User.findById(id)
+  if(!user){
+    throw new Apierror(404,"User not found in the database")
+  }
+  
+  user.deleted = true
+  user.save({validateBeforeSave:false})
+
+  res.status(200)
+  .json(200,"User Successfully Deleted",[])
+})
+
 const adminlogin = asynchandler(async(req,res)=>{
   const{userid,password} = req.body
 
@@ -1590,11 +1610,19 @@ if (audience === "Individual Recipients") {
 else if (audience === "Specific Teams") {
   audienceObj.includeTeams = selectedTeams;
 
-  finalUsers = await User.find({
-    roleid: { $in: selectedTeams }
+  finalUsers = await Project.find({
+    _id: { $in: selectedTeams }
   });
 
-  audienceObj.includeUsers = finalUsers.map(u => u._id);
+const users = finalUsers.flatMap(project =>
+  project.team.assignedMembers.map(member => member.userId)
+);
+
+audienceObj.includeUsers = [...new Set(users.map(String))];
+audienceObj.includeUsers = [
+  ...new Map(users.map(id => [id.toString(), id])).values()
+];
+
 }
 
 // 🏢 All Employees
