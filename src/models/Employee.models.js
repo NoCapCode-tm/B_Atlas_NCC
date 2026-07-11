@@ -20,6 +20,13 @@ const UserSchema = new mongoose.Schema({
         ref:"Role",
         default:null
     },
+     email:{
+        type:String,
+        required:true,
+        lowercase:true,
+        unique:true,
+        trim:true
+    },
     Emails:{
         email:{
         type:String,
@@ -97,11 +104,13 @@ const UserSchema = new mongoose.Schema({
     phone:{
         permanent:{
         type:Number,
+        default:null,
         unique:true,
         sparse:true
     },
      alternate:{
         type:Number,
+        default:null,
         unique:true,
         sparse:true
     },

@@ -29,6 +29,9 @@ const employeelogin = asynchandler(async(req,res)=>{
   if(user.designation.name !== "Employee" ){
     throw new Apierror(404,"User not Authorized to Access the portal")
   }
+  if(user?.deleted === true || user?.onboarding?.status === "Incomplete"){
+      throw new Apierror(401,"User Not Authorized to Acccess the Portal")
+    }
 
   const passwordcorrect = await user.isPasswordCorrect(password)
   if(!passwordcorrect){
@@ -500,6 +503,28 @@ const submitreport =asynchandler(async(req,res)=>{
   if(!employee){
     throw new Apierror(404,"User with this id do not exists")
   }
+
+const now = new Date();
+
+const startOfDayIST = new Date(
+  now.toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
+);
+startOfDayIST.setHours(0, 0, 0, 0);
+
+const endOfDayIST = new Date(startOfDayIST);
+endOfDayIST.setHours(23, 59, 59, 999);
+
+const existingReport = await Report.findOne({
+  user,
+  createdAt: {
+    $gte: startOfDayIST,
+    $lte: endOfDayIST,
+  },
+});
+
+if (existingReport) {
+  throw new Apierror(400, "You have already submitted today's report.");
+}
 
   const report = await Report.create({
     user:user,

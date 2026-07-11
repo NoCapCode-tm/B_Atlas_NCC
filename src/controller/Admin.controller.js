@@ -21,38 +21,17 @@ const generateTeamID = () => {
   return `P00${random}`;
 };
 
-const transporter = nodemailer.createTransport({
-  host: "gvam1102.siteground.biz",
-  port: 465,
-  secure: true,
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
-  },
-});
+// const transporter = nodemailer.createTransport({
+//   host: "gvam1102.siteground.biz",
+//   port: 465,
+//   secure: true,
+//   auth: {
+//     user: process.env.SMTP_USER,
+//     pass: process.env.SMTP_PASS,
+//   },
+// });
 
-
-const sendAnnouncementEmails = async ({ users, title, message, type }) => {
-  for (const emp of users) {
-    if (!emp?.email) continue;
-
-    const mailOptions = {
-      from: process.env.SMTP_USER,
-      to: emp.email,
-      subject: handlesubject({type}),
-      html: announcementMailTemplate({
-        name: emp.name,
-        title,
-        message,
-        type,
-      }),
-    };
-
-    await transporter.sendMail(mailOptions);
-  }
-};
-
-const handlesubject = ({type}) =>{
+  const handlesubject = ({type}) =>{
   if(type==="General Announcement"){
     return `
       PRISM Announcement | Company Update
@@ -70,196 +49,143 @@ const handlesubject = ({type}) =>{
   }
 }
 
-const announcementMailTemplate = ({ name, title, message, type }) => {
+const sendAnnouncementEmails = async ({priority, users, title, message, type }) => {
+  try {
+    for (const emp of users) {
+    const email = emp.email ?? emp?.Emails?.email;
 
-  if(type === "General Announcement"){
-    return`
-     <!DOCTYPE html>
-  <html>
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>PRISM Announcement | Company Update</title>
-  </head>
+    console.log("Resolved email:", email);
 
-  <body style="margin:0;padding:0;background:#F6F7FF;font-family:Segoe UI,Roboto,Arial;">
-    <table width="100%" cellpadding="0" cellspacing="0">
-      <tr>
-        <td align="center" style="padding:32px 16px;">
-          <table width="100%" style="max-width:560px;background:#ffffff;border-radius:14px;box-shadow:0 16px 32px rgba(0,0,0,0.06);">
-
-            <!-- Header -->
-            <tr>
-              <td style="padding:26px 28px;text-align:center;background:#EFEAFF;border-radius:14px 14px 0 0;">
-                <img src="https://prismbackend-27d920759150.herokuapp.com/public/companylogo.png" alt="PRISM" width="42" style="display:block;margin:0 auto 10px;" />
-                <h2 style="margin:0;color:#2E2A55;">General Announcement</h2>
-                <p style="margin:6px 0 0;font-size:13px;color:#6B65A8;">
-                  PRISM · Humanity Founders
-                </p>
-              </td>
-            </tr>
-
-            <!-- Content -->
-            <tr>
-              <td style="padding:30px;color:#2B2B2B;font-size:15px;line-height:1.75;">
-                <p>Hello Team,</p>
-
-                <p>
-                  We would like to share an important update as part of our continued effort to
-                  maintain transparency and alignment across the organization.
-                </p>
-
-                <p>
-                  This announcement is intended to keep everyone informed of key developments
-                  and ongoing initiatives within the company.
-                </p>
-
-                <p>
-                  Should you require any additional information or clarification, please reach
-                  out through the appropriate internal channels.
-                </p>
-
-                <p style="margin-top:26px;">
-                  Regards,<br/>
-                  <strong>Humanity Founders</strong><br/>
-                  PRISM Administration
-                </p>
-              </td>
-            </tr>
-
-          </table>
-        </td>
-      </tr>
-    </table>
-  </body>
-  </html>
-    `
-  }
-    else if(type === "Warning/Inquiry"){
-      return `
-        <!DOCTYPE html>
-  <html>
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>PRISM Notice | Action Required</title>
-  </head>
-  <body style="margin:0;padding:0;background:#FFF5F5;font-family:Segoe UI,Roboto,Arial;">
-    <table width="100%" cellpadding="0" cellspacing="0">
-      <tr>
-        <td align="center" style="padding:32px 16px;">
-          <table width="100%" style="max-width:560px;background:#ffffff;border-radius:14px;box-shadow:0 18px 36px rgba(0,0,0,0.08);">
-
-            <!-- Header -->
-            <tr>
-              <td style="padding:24px 28px;background:#FFE5E5;border-radius:14px 14px 0 0;text-align:center;">
-                <img src="https://prismbackend-27d920759150.herokuapp.com/public/companylogo.png" alt="PRISM" width="42" style="display:block;margin:0 auto 10px;" />
-                <h2 style="margin:0;color:#8B1E1E;">Official Notice</h2>
-                <p style="margin:6px 0 0;font-size:13px;color:#9B4A4A;">
-                  PRISM · Compliance & Review
-                </p>
-              </td>
-            </tr>
-
-            <!-- Content -->
-            <tr>
-              <td style="padding:30px;color:#2B2B2B;font-size:15px;line-height:1.75;">
-                <p>Hello,</p>
-
-                <p>
-                  This communication is issued to formally notify you of a matter that requires
-                  your immediate attention and review.
-                </p>
-
-                <p>
-                  Please ensure that the required action or response is provided within the
-                  stipulated timeframe, in accordance with organizational policies.
-                </p>
-
-                <p>
-                  Failure to address this matter in a timely manner may result in further review
-                  or escalation, as deemed appropriate.
-                </p>
-
-                <p style="margin-top:26px;">
-                  <strong>Humanity Founders</strong><br/>
-                  PRISM Administration
-                </p>
-              </td>
-            </tr>
-
-          </table>
-        </td>
-      </tr>
-    </table>
-  </body>
-  </html>
-      `
+    if (!email) {
+        console.log("Skipping user");
+        continue;
     }
-    else{
-      return `
-        <!DOCTYPE html>
-  <html>
+      const resend = new Resend(process.env.RESEND_API_KEY);
+          const response =  await resend.emails.send({
+        from: `ATLAS <${process.env.SMTP_USER}>`,
+        to: email,
+        subject:`DOX Portal Announcement: ${type}`,
+       html: `<!DOCTYPE html>
+  <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>PRISM Recognition | Appreciating Your Contribution</title>
+    <title>DOX Access Portal - Announcement</title>
   </head>
-  <body style="margin:0;padding:0;background:#F3FFF8;font-family:Segoe UI,Roboto,Arial;">
-    <table width="100%" cellpadding="0" cellspacing="0">
-      <tr>
-        <td align="center" style="padding:32px 16px;">
-          <table width="100%" style="max-width:560px;background:#ffffff;border-radius:14px;box-shadow:0 18px 36px rgba(0,0,0,0.06);">
-
-            <!-- Header -->
-            <tr>
-              <td style="padding:26px 28px;text-align:center;background:#E8FFF1;border-radius:14px 14px 0 0;">
-                <img src="https://prismbackend-27d920759150.herokuapp.com/public/companylogo.png" alt="PRISM" width="42" style="display:block;margin:0 auto 10px;" />
-                <h2 style="margin:0;color:#1F7A4D;">Recognition & Appreciation</h2>
-                <p style="margin:6px 0 0;font-size:13px;color:#3E8F6B;">
-                  PRISM · Humanity Founders
-                </p>
-              </td>
-            </tr>
-
-            <!-- Content -->
-            <tr>
-              <td style="padding:30px;color:#2B2B2B;font-size:15px;line-height:1.75;">
-                <p>Hello,</p>
-
-                <p>
-                  We would like to take a moment to acknowledge and appreciate your recent
-                  efforts and contributions.
-                </p>
-
-                <p>
-                  Your commitment and consistency play a meaningful role in advancing our
-                  goals and strengthening our organizational culture.
-                </p>
-
-                <p>
-                  Thank you for the value you bring to the team. We look forward to continued
-                  success together.
-                </p>
-
-                <p style="margin-top:26px;">
-                  With appreciation,<br/>
-                  <strong>Humanity Founders Leadership</strong>
-                </p>
-              </td>
-            </tr>
-
-          </table>
-        </td>
-      </tr>
-    </table>
-  </body>
-  <html>
-      `
-    }
   
- 
+  <body style="margin:0; padding:0; background:#FAFAFA; font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+  
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#FAFAFA;">
+    <tr>
+      <td align="center" style="padding:48px 16px;">
+        
+        <table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px; background:#000000; border-radius:12px; border:1px solid #333333; box-shadow:0 4px 24px rgba(0,0,0,0.5); overflow:hidden;">
+          
+          <!-- Header Section -->
+          <tr>
+            <td style="padding:40px 32px 30px; text-align:center; border-bottom: 1px solid #1A1A1A;">
+              <img src="https://nocapcode.cloud/internal/Companylogo.png" alt="NoCapCode" width="120" style="display:block; margin:0 auto 16px;" />
+              <p style="margin:8px 0 0; font-size:13px; color:#A1A1AA; text-transform:uppercase; letter-spacing:1px;">
+                Announcement
+              </p>
+            </td>
+          </tr>
+  
+          <!-- Body Section -->
+          <tr>
+            <td style="padding:40px 36px; color:#E5E7EB;">
+              
+              <!-- Metadata: Type & Priority (Mapped from image_f761a2.png) -->
+              <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:20px;">
+                <tr>
+                  <td align="left">
+                    <span style="display:inline-block; padding:6px 12px; background:#111111; border:1px solid #333333; border-radius:16px; font-size:11px; color:#A1A1AA; text-transform:uppercase; letter-spacing:0.5px; font-weight:600;">
+                      ${type}
+                    </span>
+                  </td>
+                  <td align="right">
+                    <span style="display:inline-block; font-size:12px; color:#777777;">
+                      Priority: <strong style="color:#E5E7EB;">${priority}</strong>
+                    </span>
+                  </td>
+                </tr>
+              </table>
+  
+              <!-- Announcement Title -->
+              <h1 style="margin:0 0 24px; font-size:22px; color:#FFFFFF; font-weight:600; line-height:1.4;">
+                ${title}
+              </h1>
+  
+              <!-- Announcement Message -->
+              <div style="margin:0 0 32px; font-size:15px; line-height:1.6; color:#D4D4D8; white-space:pre-wrap;">
+  ${message}
+              </div>
+  
+              <!-- Optional CTA / Dashboard Link based on the Delivery Method -->
+              <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:16px;">
+                <tr>
+                  <td align="center">
+                    <a href="https://atlas.nocapcode.cloud" style="display:inline-block; padding:12px 28px; background:#222222; color:#FFFFFF; font-weight:500; text-decoration:none; border-radius:6px; border:1px solid #333333; font-size:14px; transition: background 0.2s;">
+                      View in Dashboard
+                    </a>
+                  </td>
+                </tr>
+              </table>
+  
+            </td>
+          </tr>
+        </table>
+  
+        <!-- Footer Section (Consistent with Onboarding Template) -->
+        <table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px; margin-top:20px; text-align:center; color:#777777; font-size:12px; line-height: 1.6;">
+          <tr>
+            <td style="padding:20px 20px 10px 20px;">
+              If you have any questions regarding this announcement, contact us at
+              <a href="mailto:hr@nocapcode.cloud" style="color:#A1A1AA; text-decoration:underline;">
+                hr@nocapcode.cloud
+              </a>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding-bottom:12px;">
+              <a href="https://www.linkedin.com/company/nocapcode" target="_blank" style="text-decoration:none;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="#777777">
+                  <path d="M20.447 20.452H16.893V14.847C16.893 13.522 16.868 11.813 15.049 11.813C13.205 11.813 12.923 13.248 12.923 14.754V20.452H9.368V9H12.782V10.561H12.829C13.306 9.659 14.468 8.707 16.221 8.707C19.897 8.707 20.447 11.07 20.447 14.138V20.452ZM5.337 7.433C4.196 7.433 3.27 6.507 3.27 5.367C3.27 4.227 4.196 3.301 5.337 3.301C6.477 3.301 7.403 4.227 7.403 5.367C7.403 6.507 6.477 7.433 5.337 7.433ZM7.119 20.452H3.555V9H7.119V20.452Z" />
+                </svg>
+              </a>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding-bottom:12px;">
+              <a href="https://nocapcode.cloud/privacy" target="_blank" style="color:#777777; text-decoration:none; margin:0 6px;">Privacy</a> |
+              <a href="https://nocapcode.cloud/terms" target="_blank" style="color:#777777; text-decoration:none; margin:0 6px;">Terms</a> |
+              <a href="https://nocapcode.cloud/security" target="_blank" style="color:#777777; text-decoration:none; margin:0 6px;">Security</a>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding-top:10px; border-top: 1px solid #CFCFCF; color:#777777;">
+              &copy; 2024-26 NoCapCode, Inc. All rights reserved.<br>
+              Santa Fe ・ New Mexico 87501, USA
+            </td>
+          </tr>
+        </table>
+  
+      </td>
+    </tr>
+  </table>
+  
+  </body>
+              </html>`
+      });
+  
+      console.log(response)
+    }
+  } catch (error) {
+    console.log("Something went wrong in sending mail",error.message)
+  }
 };
+
+
 
 
 
@@ -297,217 +223,6 @@ const addemployee = asynchandler(async(req,res)=>{
           status:"Onboarding",
         })
 
-
-//  const mailOptions = {
-//   to: email,
-//   from: process.env.SMTP_USER,
-//   subject: "Humanity Founders Portal Access | Your Secure Login Credentials",
-//   html: `
-//   <!DOCTYPE html>
-//   <html>
-//   <head>
-//     <meta charset="UTF-8" />
-//     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-//     <title>Humanity Founders Portal Access</title>
-//   </head>
-
-//   <body style="
-//     margin:0;
-//     padding:0;
-//     background: linear-gradient(
-//       180deg,
-//       rgba(215,204,255,0.16) 0%,
-//       rgba(224,215,255,0.16) 30%,
-//       rgba(241,236,255,0.16) 60%,
-//       rgba(255,255,255,1) 100%
-//     );
-//     font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-//   ">
-
-//     <table width="100%" cellpadding="0" cellspacing="0">
-//       <tr>
-//         <td align="center" style="padding:40px 16px;">
-
-//           <!-- Main Card -->
-//           <table width="100%" cellpadding="0" cellspacing="0"
-//             style="
-//               max-width:560px;
-//               background:#ffffff;
-//               border-radius:16px;
-//               box-shadow:0 20px 40px rgba(0,0,0,0.06);
-//               overflow:hidden;
-//             "
-//           >
-
-//             <!-- Header -->
-//             <tr>
-//               <td style="
-//                 padding:28px 32px;
-//                 background: linear-gradient(135deg, #D7CCFF, #E0D7FF);
-//                 text-align:center;
-//               ">
-
-//                 <!-- PRISM Logo -->
-//                 <img
-//                   src="https://prismbackend-27d920759150.herokuapp.com/public/companylogo.png"
-//                   alt="PRISM"
-//                   width="48"
-//                   style="display:block; margin:0 auto 12px;"
-//                 />
-
-//                 <h1 style="
-//                   margin:0;
-//                   font-size:22px;
-//                   color:#2E2A55;
-//                   letter-spacing:0.4px;
-//                 ">
-//                   Welcome to Humanity Founders Portal
-//                 </h1>
-
-//                 <p style="
-//                   margin:6px 0 0;
-//                   font-size:13px;
-//                   color:#4A4680;
-//                 ">
-//                   Humanity Founders · Internal Access Credentials
-//                 </p>
-
-//               </td>
-//             </tr>
-
-//             <!-- Content -->
-//             <tr>
-//               <td style="padding:32px; color:#2B2B2B;">
-
-//                 <p style="margin:0 0 16px; font-size:15px;">
-//                   Hello <strong>${name.split(" ")[0]}</strong>, 
-//                 </p>
-
-//                 <p style="
-//                   margin:0 0 20px;
-//                   font-size:15px;
-//                   line-height:1.7;
-//                 ">
-//                   Your account has been successfully provisioned on <strong>PRISM</strong>, 
-//                   Humanity Founders’ internal platform for operational visibility, collaboration, 
-//                   and performance tracking.
-//                 </p>
-
-//                 <p style="
-//                   margin:0 0 20px;
-//                   font-size:15px;
-//                   line-height:1.7;
-//                 ">
-//                   Below are your secure login credentials. Please keep this information confidential.
-//                 </p>
-
-//                 <!-- Credentials Box -->
-//                 <table width="100%" cellpadding="0" cellspacing="0"
-//                   style="
-//                     background:#F7F5FF;
-//                     border-radius:12px;
-//                     padding:20px;
-//                   "
-//                 >
-//                   <tr>
-//                     <td>
-
-//                       <p style="margin:0 0 6px; font-size:12px; color:#6B65A8;">
-//                         Employee Identifier
-//                       </p>
-//                       <p style="
-//                         margin:0 0 16px;
-//                         font-size:16px;
-//                         font-weight:600;
-//                         color:#2E2A55;
-//                       ">
-//                         ${empid}
-//                       </p>
-//                       <p style="margin:0 0 6px; font-size:12px; color:#6B65A8;">
-//                         Temporary Access Password
-//                       </p>
-//                       <p style="
-//                         margin:0;
-//                         font-size:16px;
-//                         font-weight:600;
-//                         color:#2E2A55;
-//                       ">
-//                         ${password}
-//                       </p>
-
-//                     </td>
-//                   </tr>
-//                 </table>
-
-//                 <p style="
-//                   margin:20px 0 0;
-//                   font-size:14px;
-//                   line-height:1.7;
-//                 ">
-//                   For security compliance, you will be prompted to update your password upon first login.
-//                   We recommend completing your profile details immediately after accessing the platform.
-//                 </p>
-
-//                 <!-- CTA -->
-//                 <div style="margin-top:30px; text-align:center;">
-//                   <a href="https://onehumanityportal.humanityfounders.com"
-//                     style="
-//                       display:inline-block;
-//                       background:#5A4BFF;
-//                       color:#ffffff;
-//                       text-decoration:none;
-//                       padding:12px 26px;
-//                       border-radius:10px;
-//                       font-size:14px;
-//                       font-weight:600;
-//                     "
-//                   >
-//                     Access Humanity Founders Portal 
-//                   </a>
-//                 </div>
-
-//               </td>
-//             </tr>
-
-//             <!-- Footer -->
-//             <tr>
-//               <td style="
-//                 padding:24px 32px;
-//                 background:#FAFAFF;
-//                 border-top:1px solid #EEE;
-//                 text-align:center;
-//               ">
-//                 <p style="
-//                   margin:0;
-//                   font-size:12px;
-//                   color:#7A7A9D;
-//                   line-height:1.6;
-//                 ">
-//                   Should you require assistance, please reach out to the HR team.<br/>
-//                   <strong>Humanity Founders</strong> · Humanity Founders Platform
-//                 </p>
-//               </td>
-//             </tr>
-
-//           </table>
-
-//           <p style="
-//             margin-top:20px;
-//             font-size:11px;
-//             color:#9A9AB5;
-//             text-align:center;
-//           ">
-//             This communication contains confidential information and is intended solely for the recipient.
-//           </p>
-
-//         </td>
-//       </tr>
-//     </table>
-
-//   </body>
-//   </html>
-//   `
-// };
          const resend = new Resend(process.env.RESEND_API_KEY);
          await resend.emails.send({
       from: `DOX <${process.env.SMTP_USER}>`,
@@ -729,6 +444,9 @@ const adminlogin = asynchandler(async(req,res)=>{
 
   if(user.designation.name !== "Administrator"){
     throw new Apierror(404,"User not Authorized to Access the portal")
+  }
+  if(user?.deleted === true || user?.onboarding?.status === "Incomplete"){
+    throw new Apierror(401,"User Not Authorized to Acccess the Portal")
   }
 
   const passwordcorrect = await user.isPasswordCorrect(password)
@@ -1591,6 +1309,7 @@ const user = await User.findById(employee._id)
   }
 
   const channelsNormalized = normalizeChannels(channels);
+  console.log(channelsNormalized)
 
   const audienceObj = {
     name: audience,
@@ -1637,6 +1356,7 @@ else if (audience === "All Employees") {
       title,
       message,
       type,
+      priority
     });
   }
   const announcement = await Announcement.create({
