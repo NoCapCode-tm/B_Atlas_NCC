@@ -404,7 +404,7 @@ const addemployee = asynchandler(async(req,res)=>{
       .json(new Apiresponse(201, "User Created Successfully", user));
     
     } catch (error) {
-        console.log("Error",error.message)
+        console.log("Error ",error.message)
     }
 
 })

@@ -548,6 +548,30 @@ if (existingReport) {
   .json(201,"Report Submitted Successfully",report)
 })
 
+export const update = asynchandler(async(req,res)=>{
+  const {id} = req.body
+  const {email,phone,name,password}=req.body
+  if(!id){
+    throw new Apierror(400,"Please provide the user id")
+  }
+
+  const user = await User.findById(id)
+  if(!user){
+    throw new Apierror(404,"User not found ")
+  }
+
+  
+  if(name)user.name = name
+  if(email)user.Emails.email = email
+  if(phone)user.phone.permanent = phone
+  if(password)user.password=password
+
+  const empl = await user.save({validateBeforeSave:false})
+
+  res.status(200)
+  .json(new Apiresponse(201,"User Updated Successgfully",empl))
+})
+
 const acknowledge = asynchandler(async(req,res)=>{
   const {id,user}=req.body
   if(!id || !user){
