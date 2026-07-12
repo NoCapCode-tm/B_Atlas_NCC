@@ -104,13 +104,11 @@ const UserSchema = new mongoose.Schema({
         permanent:{
         type:Number,
         default:null,
-        unique:true,
         sparse:true
     },
      alternate:{
         type:Number,
         default:null,
-        unique:true,
         sparse:true
     },
 },
