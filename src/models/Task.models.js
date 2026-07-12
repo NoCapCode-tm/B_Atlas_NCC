@@ -40,15 +40,23 @@ const TaskSchema = mongoose.Schema({
     }],
     dependencies:{
         files:[{
+            img:{
             type:String,
             default:"",
-        }],
-        links:[
-            {
-                type:String,
-                default:""
-            }
-        ]
+           },
+        name:{
+            type:String,
+        }
+    }],
+        links:[{
+            link:{
+            type:String,
+            default:"",
+           },
+        name:{
+           type:String,
+        }
+    }],
     },
     weightage:{
         type:Number,

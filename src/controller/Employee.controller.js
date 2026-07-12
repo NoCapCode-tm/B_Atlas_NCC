@@ -10,6 +10,7 @@ import { Report } from "../models/Reports.models.js";
 import { Announcement } from "../models/Announcement.models.js";
 import { Project } from "../models/Project.models.js";
 import { Subtask } from "../models/SubTasks.models.js";
+import { uploadToCloudinary1 } from "../utils/cloudinary1.utils.js";
 
 
 
@@ -257,78 +258,82 @@ export const saveTime = async (req, res) => {
   }
 };
 
-export const uploadTaskAttachment = asynchandler(async (req, res) => {
-  const { taskId  } = req.body;
-  const user = req.user
-
-  const employee = await User.findById(user._id)
-
-  if (!employee ) {
-    throw new Apierror(404, "Employee not found");
-  }
-
-  if (!req.file || !taskId) {
-    throw new Apierror(400, "File is required");
-  }
-
-  const task = await Task.findById(taskId);
-  if (!task ) {
-    throw new Apierror(404, "Task not found");
-  }
-
-  if(task.projectId){
-     const project = await Project.findById(task.projectId)
-    if(!project){
-      throw new Apierror(404,"No Project Found")
+  export const uploadTaskAttachment = asynchandler(async (req, res) => {
+    try {
+      const { taskId  } = req.body;
+      const user = req.user
+    
+      const employee = await User.findById(user._id)
+    
+      if (!employee ) {
+        throw new Apierror(404, "Employee not found");
+      }
+    
+      if (!req.file || !taskId) {
+        throw new Apierror(400, "File is required");
+      }
+    
+      const task = await Task.findById(taskId);
+      if (!task ) {
+        throw new Apierror(404, "Task not found");
+      }
+    
+      if(task.projectId){
+        const project = await Project.findById(task.projectId)
+        if(!project){
+          throw new Apierror(404,"No Project Found")
+        }
+        project.recentActivity.push({
+        title:`Added Attachment ${req.file.originalname}`,
+        refs:task._id,
+        user:user.name,
+        time:Date.now()
+      })
+    
+      await project.save({validateBeforeSave:false})
+    
+      }
+    
+      // Upload to Cloudinary
+      const uploaded = await uploadToCloudinary1(
+        req.file.buffer,
+        "atlas/tasks",
+        `${task.title}-${Date.now()}`
+      );
+    
+      // Save file URL in schema (dependencies.files)
+      task.dependencies.files.push({img:uploaded.secure_url,name:user?.name});
+    
+      // History entry
+      task.history.push({
+        actionby:user.name,
+        title: `Attachment added: ${req.file.originalname}`,
+        timeat: Date.now()
+      });
+    
+      await task.save({ validateBeforeSave: false });
+    
+      employee.recentActivity.push({
+        name:"Attachment added",
+        refs:task._id,
+        time:Date.now()
+      })
+    
+      await employee.save({ validateBeforeSave: false });
+    
+    
+    
+    
+      res.status(201).json(
+        new Apiresponse(201, "Attachment uploaded successfully", {
+          fileUrl: uploaded.secure_url,
+          fileName: req.file.originalname
+        })
+      );
+    } catch (error) {
+      console.log("Something went wrong",error.message)
     }
-     project.recentActivity.push({
-    title:`Added Attachment ${req.file.originalname}`,
-    refs:task._id,
-    user:user.name,
-    time:Date.now()
-  })
-
-  await project.save({validateBeforeSave:false})
-
-  }
- 
-  // Upload to Cloudinary
-  const uploaded = await uploadToCloudinary(
-    req.file.buffer,
-    "prism/tasks",
-    `${task.title}-${Date.now()}`
-  );
-
-  // Save file URL in schema (dependencies.files)
-  task.dependencies.files.push(uploaded.secure_url);
-
-  // History entry
-  task.history.push({
-    actionby:user.name,
-    title: `Attachment added: ${req.file.originalname}`,
-    timeat: Date.now()
   });
-
-  await task.save({ validateBeforeSave: false });
-
-  employee.recentActivity.push({
-    name:"Attachment added",
-    refs:task._id,
-    time:Date.now()
-  })
-
-  await employee.save({ validateBeforeSave: false });
-
- 
-
-
-  res.status(201).json(
-    new Apiresponse(201, "Attachment uploaded successfully", {
-      fileUrl: uploaded.secure_url,
-      fileName: req.file.originalname
-    })
-  );
-});
 
 const sendcomment = asynchandler(async(req,res)=>{
   const {comment,taskid,userid} = req.body
