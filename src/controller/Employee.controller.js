@@ -409,7 +409,7 @@ const completetask = asynchandler(async(req,res)=>{
     project.recentActivity.push({
     title:"Completed Task",
     refs:task._id,
-    user:user.name,
+    user:user?.name,
     time:Date.now()
   })
 
@@ -473,7 +473,7 @@ const reviewtask = asynchandler(async(req,res)=>{
     throw new Apierror(400,"Task or User not found")
   }
 
-  task.status = "Pending"
+  task.status = "In Review"
   task.history.push({
     actionby:user.name,
     title: `Task set to Review`,
