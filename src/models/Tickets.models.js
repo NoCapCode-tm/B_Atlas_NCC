@@ -8,7 +8,7 @@ const TicketSchema = mongoose.Schema({
    },
    category:{
     type:String,
-    enum:["Access","Payrole","Hardware","Software","Bug"]
+    enum:["Access","Payroll","Hardware","Software","Bug"]
     },
    priority:{
     type:String,
