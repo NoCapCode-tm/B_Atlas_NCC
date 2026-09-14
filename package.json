@@ -1,6 +1,6 @@
 {
-  "name": "prismjobportal2.0",
-  "version": "1.0.0",
+  "name": "atlas-backend",
+  "version": "0.1.2",
   "description": "",
   "main": "index.js",
   "type": "module",
